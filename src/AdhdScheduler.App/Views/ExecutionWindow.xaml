@@ -1,0 +1,71 @@
+<Window x:Class="AdhdScheduler.App.Views.ExecutionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title=""
+        Width="420"
+        SizeToContent="Height"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Topmost="True"
+        ShowInTaskbar="False"
+        WindowStartupLocation="Manual"
+        Background="White"
+        BorderBrush="#CCCCCC"
+        BorderThickness="1"
+        MouseLeftButtonDown="OnMouseLeftButtonDown">
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{Binding CancelPrecursorCommand}" />
+    </Window.InputBindings>
+
+    <StackPanel Margin="20">
+        <!-- 次の1手がある -->
+        <StackPanel Visibility="{Binding HasStep, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="目的" Style="{StaticResource Caption}" />
+            <TextBlock Text="{Binding Purpose}" FontSize="20" TextWrapping="Wrap" Margin="0,2,0,12" />
+            <TextBlock Text="理由" Style="{StaticResource Caption}" />
+            <TextBlock Text="{Binding Reason}" FontSize="14" TextWrapping="Wrap" Margin="0,2,0,0" />
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,20,0,0"
+                        Visibility="{Binding ShowStepButtons, Converter={StaticResource BoolToVisibility}}">
+                <Button Content="完了" Command="{Binding CompleteCommand}" />
+                <Button Content="前段階追加" Command="{Binding BeginPrecursorCommand}" />
+            </StackPanel>
+
+            <!-- 前段階追加の入力欄 -->
+            <StackPanel Margin="0,20,0,0"
+                        Visibility="{Binding IsAddingPrecursor, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock Text="目的" Style="{StaticResource Caption}" />
+                <TextBox x:Name="PrecursorPurpose"
+                         Text="{Binding NewPurpose, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource MultiLineInput}" />
+                <TextBlock Text="理由" Style="{StaticResource Caption}" />
+                <TextBox Text="{Binding NewReason, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{StaticResource MultiLineInput}" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
+                    <Button Content="確定" Command="{Binding ConfirmPrecursorCommand}" />
+                    <Button Content="キャンセル" Command="{Binding CancelPrecursorCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- 取り組む目標のキューが空 -->
+        <StackPanel Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="これで全てです。お疲れさまでした。" FontSize="16" TextWrapping="Wrap" />
+            <Button Content="計画画面を開く"
+                    Command="{Binding OpenPlanningCommand}"
+                    HorizontalAlignment="Right"
+                    Margin="0,20,0,0" />
+        </StackPanel>
+
+        <!-- 取り組む目標が未指定 -->
+        <StackPanel Visibility="{Binding IsNoActiveGoal, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="取り組む目標が指定されていません。" FontSize="16" TextWrapping="Wrap" />
+            <Button Content="計画画面を開く"
+                    Command="{Binding OpenPlanningCommand}"
+                    HorizontalAlignment="Right"
+                    Margin="0,20,0,0" />
+        </StackPanel>
+    </StackPanel>
+</Window>
